@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
 public class ReqresTests extends TestBase {
@@ -41,7 +42,7 @@ public class ReqresTests extends TestBase {
     }
 
     @Test
-    void listUsersTest() {
+    void getListUsersTest() {
         String response =
                 get("api/users?page=2")
                 .then()
@@ -50,5 +51,33 @@ public class ReqresTests extends TestBase {
 
         System.out.println(response);
     }
+
+    @Test
+    void getSingleUserTest() {
+        get("api/users/2")
+                .then()
+                .statusCode(200)
+                .body("data.id", is(2), "data.email", is("janet.weaver@reqres.in"),
+                        "data.first_name", is("Janet"), "data.last_name", is("Weaver"),
+                        "data.avatar", is("https://reqres.in/img/faces/2-image.jpg"),
+                        "support.url", is("https://reqres.in/#support-heading"),
+                        "support.text", is(	"To keep ReqRes free, contributions towards server costs are appreciated!"));
+    }
+
+    @Test
+    void updateUserTest() {
+        String putData = "{\"name\":\"morpheus\",\"job\":\"zion resident\"}";
+
+        given()
+                .contentType(JSON)
+                .body(putData)
+                .when()
+                .put("api/users/2")
+                .then()
+                .statusCode(200)
+                .body("name", is("morpheus"), "job", is("zion resident"));
+    }
+
+
 
 }
