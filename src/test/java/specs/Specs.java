@@ -10,8 +10,8 @@ import static org.hamcrest.Matchers.is;
 public class Specs {
     public static RequestSpecification requestLogin = with()
             .contentType(JSON)
-            .baseUri("https://reqres.in/")
-            .basePath("api/login")
+            .baseUri("https://reqres.in")
+            .basePath("/api")
             .log().all();
 
     public static ResponseSpecBuilder responseSpec = new ResponseSpecBuilder()
