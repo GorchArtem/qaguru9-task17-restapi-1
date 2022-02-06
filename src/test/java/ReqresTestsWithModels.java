@@ -1,9 +1,12 @@
+import models.UserData;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static specs.Specs.request;
 import static specs.Specs.responseSpec;
 
@@ -37,17 +40,21 @@ public class ReqresTestsWithModels {
     }
 
     @Test
-    void getSingleUserTest() {
-        given()
+    @DisplayName("Single User test with lombok model")
+    void getSingleUser() {
+        UserData data = given()
                 .spec(request)
+                .when()
                 .get("/users/2")
                 .then()
                 .spec(responseSpec)
-                .body("data.id", is(2), "data.email", is("janet.weaver@reqres.in"),
-                        "data.first_name", is("Janet"), "data.last_name", is("Weaver"),
-                        "data.avatar", is("https://reqres.in/img/faces/2-image.jpg"),
-                        "support.url", is("https://reqres.in/#support-heading"),
-                        "support.text", is("To keep ReqRes free, contributions towards server costs are appreciated!"));
+                .log()
+                .body()
+                .extract().as(UserData.class);
+
+        assertEquals(2, data.getUser().getId());
+        assertEquals("Janet", data.getUser().getFirstName());
+
     }
 
     @Test
