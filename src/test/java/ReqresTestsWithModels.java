@@ -11,7 +11,6 @@ public class ReqresTestsWithModels {
 
     @Test
     void loginSuccessfulTest() {
-        //https://reqres.in/api/login
         String data = "{\"email\":\"eve.holt@reqres.in\",\"password\":\"cityslicka\"}";
 
         given()
@@ -27,20 +26,23 @@ public class ReqresTestsWithModels {
 
     @Test
     void getListUsersTest() {
-        String response =
-                get("api/users?page=2")
-                        .then()
-                        .statusCode(200)
-                        .extract().path("data").toString();
+        String response = given()
+                .spec(request)
+                .get("/users?page=2")
+                .then()
+                .spec(responseSpec)
+                .extract().path("data").toString();
 
         System.out.println(response);
     }
 
     @Test
     void getSingleUserTest() {
-        get("api/users/2")
+        given()
+                .spec(request)
+                .get("/users/2")
                 .then()
-                .statusCode(200)
+                .spec(responseSpec)
                 .body("data.id", is(2), "data.email", is("janet.weaver@reqres.in"),
                         "data.first_name", is("Janet"), "data.last_name", is("Weaver"),
                         "data.avatar", is("https://reqres.in/img/faces/2-image.jpg"),
@@ -53,12 +55,12 @@ public class ReqresTestsWithModels {
         String putData = "{\"name\":\"morpheus\",\"job\":\"zion resident\"}";
 
         given()
-                .contentType(JSON)
+                .spec(request)
                 .body(putData)
                 .when()
-                .put("api/users/2")
+                .put("/users/2")
                 .then()
-                .statusCode(200)
+                .spec(responseSpec)
                 .body("name", is("morpheus"), "job", is("zion resident"));
 
     }
