@@ -14,8 +14,7 @@ public class Specs {
             .basePath("api/login")
             .log().all();
 
-    public static ResponseSpecBuilder responseLogin = new ResponseSpecBuilder()
-            .expectStatusCode(200)
-            .expectBody("token", is("QpwL5tke4Pnpja7X4"));
+    public static ResponseSpecBuilder responseSpec = new ResponseSpecBuilder()
+            .expectStatusCode(200);
 
 }
