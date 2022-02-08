@@ -1,10 +1,11 @@
+import models.UpdateUserRequest;
+import models.UpdateUserResponse;
 import models.UserData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static specs.Specs.request;
@@ -54,21 +55,27 @@ public class ReqresTestsWithModels {
 
         assertEquals(2, data.getUser().getId());
         assertEquals("Janet", data.getUser().getFirstName());
+        assertEquals("Weaver", data.getUser().getLastName());
 
     }
 
     @Test
+    @DisplayName("Update User test with lombok model")
     void updateUserTest() {
-        String putData = "{\"name\":\"morpheus\",\"job\":\"zion resident\"}";
+        UpdateUserRequest updateUser = new UpdateUserRequest("morpheus", "zion resident");
 
-        given()
+        UpdateUserResponse userResponse = given()
                 .spec(request)
-                .body(putData)
+                .body(updateUser)
                 .when()
                 .put("/users/2")
                 .then()
                 .spec(responseSpec)
-                .body("name", is("morpheus"), "job", is("zion resident"));
+                .log()
+                .body().extract().as(UpdateUserResponse.class);
+        assertEquals(userResponse.getName(), updateUser.getName());
+        assertEquals(userResponse.getJob(), updateUser.getJob());
+
 
     }
 }
