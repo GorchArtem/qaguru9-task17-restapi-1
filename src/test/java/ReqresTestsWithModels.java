@@ -1,10 +1,8 @@
-import models.UpdateUserRequest;
-import models.UpdateUserResponse;
-import models.UserData;
+import models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.get;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,16 +13,25 @@ public class ReqresTestsWithModels {
 
     @Test
     void loginSuccessfulTest() {
-        String data = "{\"email\":\"eve.holt@reqres.in\",\"password\":\"cityslicka\"}";
+//        String data = "{\"email\":\"eve.holt@reqres.in\",\"password\":\"cityslicka\"}";
+        String email = "eve.holt@reqres.in";
+        String password = "cityslicka";
+        String token = "QpwL5tke4Pnpja7X4";
 
-        given()
+        LoginUserRequest data = new LoginUserRequest(email, password);
+
+        LoginUserResponse response = given()
                 .spec(request)
                 .body(data)
                 .when()
                 .post("/login")
                 .then()
                 .spec(responseSpec)
-                .body("token", is("QpwL5tke4Pnpja7X4"));
+                .log()
+                .body()
+                .extract().as(LoginUserResponse.class);
+
+        assertEquals(token, response.getToken());
 
     }
 
@@ -62,7 +69,10 @@ public class ReqresTestsWithModels {
     @Test
     @DisplayName("Update User test with lombok model")
     void updateUserTest() {
-        UpdateUserRequest updateUser = new UpdateUserRequest("morpheus", "zion resident");
+        String name = "morpheus";
+        String job = "zion";
+
+        UpdateUserRequest updateUser = new UpdateUserRequest(name, job);
 
         UpdateUserResponse userResponse = given()
                 .spec(request)
@@ -73,6 +83,7 @@ public class ReqresTestsWithModels {
                 .spec(responseSpec)
                 .log()
                 .body().extract().as(UpdateUserResponse.class);
+
         assertEquals(userResponse.getName(), updateUser.getName());
         assertEquals(userResponse.getJob(), updateUser.getJob());
 
